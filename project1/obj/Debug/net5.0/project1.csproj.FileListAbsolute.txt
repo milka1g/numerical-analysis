@@ -1,0 +1,16 @@
+C:\Users\nikol\opna\project1\bin\Debug\net5.0\project1.exe
+C:\Users\nikol\opna\project1\bin\Debug\net5.0\project1.deps.json
+C:\Users\nikol\opna\project1\bin\Debug\net5.0\project1.runtimeconfig.json
+C:\Users\nikol\opna\project1\bin\Debug\net5.0\project1.runtimeconfig.dev.json
+C:\Users\nikol\opna\project1\bin\Debug\net5.0\project1.dll
+C:\Users\nikol\opna\project1\bin\Debug\net5.0\ref\project1.dll
+C:\Users\nikol\opna\project1\bin\Debug\net5.0\project1.pdb
+C:\Users\nikol\opna\project1\obj\Debug\net5.0\project1.csproj.AssemblyReference.cache
+C:\Users\nikol\opna\project1\obj\Debug\net5.0\project1.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\nikol\opna\project1\obj\Debug\net5.0\project1.AssemblyInfoInputs.cache
+C:\Users\nikol\opna\project1\obj\Debug\net5.0\project1.AssemblyInfo.cs
+C:\Users\nikol\opna\project1\obj\Debug\net5.0\project1.csproj.CoreCompileInputs.cache
+C:\Users\nikol\opna\project1\obj\Debug\net5.0\project1.dll
+C:\Users\nikol\opna\project1\obj\Debug\net5.0\ref\project1.dll
+C:\Users\nikol\opna\project1\obj\Debug\net5.0\project1.pdb
+C:\Users\nikol\opna\project1\obj\Debug\net5.0\project1.genruntimeconfig.cache
