@@ -6,15 +6,22 @@ namespace project1
 {
     class Program
     {
+        public class Element
+        {
+            public int p { get; set; }
+            public int q { get; set; }
+            public decimal err { get; set; }
+            public string type { get; set; }
+        }
         const decimal CONST = 3.1415926m;
         //const decimal CONST = 0.584962500721156m;
-        static int K = 0;
+        static int K = 100;
         static List<int> plist = new List<int>();
         static List<int> qlist = new List<int>();
         static List<decimal> xlist = new List<decimal>(1);
         static List<int> alist = new List<int>(1);
         static List<decimal> dlist = new List<decimal>(1);
-        static List<(int, int, decimal)> sortedByErrors = new List<(int, int, decimal)>();
+        static List<Element> sortedByErrors = new List<Element>();
 
         static void Main(string[] args)
         {
@@ -27,9 +34,10 @@ namespace project1
                 int m = Convert.ToInt32(Console.ReadLine());
 
                 Console.WriteLine("You entered n:" + n + ", m:" + m);
-                K = m - n + 20;
                 VMVapprox(n, m);
                 Vdecimals(CONST);
+                Console.WriteLine("---------------------");
+                sortByErrors();
                 plist.Clear();
                 qlist.Clear();
                 Console.WriteLine("\nContinue? (y/n)");
@@ -51,7 +59,13 @@ namespace project1
             foreach (var pq in pandqs)
             {
                 Console.Write("p/q = " + pq.Item1 + "/" + pq.Item2);
-                sortedByErrors.Add((pq.Item1, pq.Item2, Decimal.MaxValue));
+                sortedByErrors.Add(new Element
+                {
+                    p = pq.Item1,
+                    q = pq.Item2,
+                    err = Decimal.MaxValue,
+                    type = "N"
+                });
                 clearArrays();
                 Vdecimals(Decimal.Divide(pq.Item1, pq.Item2));
             }
@@ -119,9 +133,21 @@ namespace project1
 
         static void sortByErrors()
         {
-            foreach (var s in sortedByErrors)
+            decimal lastError = Decimal.MaxValue;
+            foreach (var el in sortedByErrors)
             {
-                s.Item3 = Math.Abs();
+                el.err = Math.Abs(CONST - Decimal.Divide(el.p, el.q));
+                if (el.err <= lastError)
+                {
+                    el.type = "I";
+                }
+                lastError = el.err;
+            }
+            sortedByErrors = sortedByErrors.OrderBy(o => o.err).ToList();
+
+            foreach (var v in sortedByErrors)
+            {
+                Console.WriteLine("p/q = " + v.p + "/" + v.q + "  e1: " + v.err + "  type: " + v.type);
             }
         }
     }
