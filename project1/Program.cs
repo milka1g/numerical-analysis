@@ -6,22 +6,23 @@ namespace project1
 {
     class Program
     {
-        public class Element
+        public class Fraction
         {
             public int p { get; set; }
             public int q { get; set; }
-            public decimal err { get; set; }
+            public decimal err1 { get; set; }
+            public decimal err2 { get; set; }
             public string type { get; set; }
         }
-        const decimal CONST = 3.1415926m;
-        //const decimal CONST = 0.584962500721156m;
+        //const decimal CONST = 3.1415926m;
+        //const decimal CONST = 0.584962500721156m; //Salem number σ1
+        const decimal CONST = 3.3598856m; //Reciprocal Fibonacci constant
+        //const decimal CONST = 1.7320508m; //Theodorus' constant sqrt(3)
         static int K = 100;
-        static List<int> plist = new List<int>();
-        static List<int> qlist = new List<int>();
         static List<decimal> xlist = new List<decimal>(1);
         static List<int> alist = new List<int>(1);
         static List<decimal> dlist = new List<decimal>(1);
-        static List<Element> sortedByErrors = new List<Element>();
+        static List<Fraction> sortedByErrors = new List<Fraction>();
 
         static void Main(string[] args)
         {
@@ -32,14 +33,13 @@ namespace project1
                 int n = Convert.ToInt32(Console.ReadLine());
                 Console.WriteLine("Enter m:");
                 int m = Convert.ToInt32(Console.ReadLine());
-
                 Console.WriteLine("You entered n:" + n + ", m:" + m);
                 VMVapprox(n, m);
+                Console.WriteLine("Constant is: " + CONST);
                 Vdecimals(CONST);
-                Console.WriteLine("---------------------");
+                Console.WriteLine("\n---------------------");
                 sortByErrors();
-                plist.Clear();
-                qlist.Clear();
+                sortedByErrors.Clear();
                 Console.WriteLine("\nContinue? (y/n)");
                 cont = Console.ReadLine();
             }
@@ -51,24 +51,16 @@ namespace project1
             {
                 int q = i;
                 int p = Decimal.ToInt32(Decimal.Round(Decimal.Multiply(CONST, q)));
-                plist.Add(p);
-                qlist.Add(q);
-            }
-
-            var pandqs = plist.Zip(qlist, (p, q) => (p, q));
-            foreach (var pq in pandqs)
-            {
-                Console.Write("p/q = " + pq.Item1 + "/" + pq.Item2);
-                sortedByErrors.Add(new Element
+                sortedByErrors.Add(new Fraction
                 {
-                    p = pq.Item1,
-                    q = pq.Item2,
-                    err = Decimal.MaxValue,
+                    p = p,
+                    q = q,
+                    err1 = Decimal.MaxValue,
+                    err2 = Decimal.MaxValue,
                     type = "N"
                 });
-                clearArrays();
-                Vdecimals(Decimal.Divide(pq.Item1, pq.Item2));
             }
+
             Console.WriteLine("---------------------");
             clearArrays();
         }
@@ -80,7 +72,7 @@ namespace project1
             dlist[0] = xlist[0] - alist[0];
             for (int i = 1; i < K; i++)
             {
-                if (dlist[i - 1] < 0.000001m)
+                if (dlist[i - 1] < 0.00000001m)
                 {
                     break;
                 }
@@ -88,15 +80,15 @@ namespace project1
                 alist.Add(Decimal.ToInt32(Decimal.Floor(xlist[i])));
                 dlist.Add(xlist[i] - alist[i]);
             }
-            if (alist[alist.Count - 1] == 1)
+            if (alist[alist.Count - 1] == 1 && alist.Count != 1)
             {
                 alist.RemoveAt(alist.Count - 1);
                 alist[alist.Count - 1]++;
             }
-            printVerig();
+            printVeriz();
         }
 
-        static void printVerig()
+        static void printVeriz()
         {
             Console.Write("[");
             for (int i = 0; i < alist.Count; i++)
@@ -118,7 +110,7 @@ namespace project1
                     Console.Write(alist[i] + ",");
                 }
             }
-            Console.WriteLine("]");
+            Console.Write("]");
         }
 
         static void clearArrays()
@@ -133,22 +125,46 @@ namespace project1
 
         static void sortByErrors()
         {
-            decimal lastError = Decimal.MaxValue;
+            decimal minError = Decimal.MaxValue;
+            decimal minError2 = Decimal.MaxValue;
             foreach (var el in sortedByErrors)
             {
-                el.err = Math.Abs(CONST - Decimal.Divide(el.p, el.q));
-                if (el.err <= lastError)
+                int gcd = GCD(el.p, el.q);
+                el.err1 = Math.Abs(CONST - Decimal.Divide(el.p, el.q));
+                el.err2 = Math.Abs(Decimal.Multiply(el.q/gcd, CONST) - el.p/gcd);
+                if (el.err1 <= minError)
                 {
                     el.type = "I";
                 }
-                lastError = el.err;
+                if (el.err2 <= minError2)
+                {
+                    el.type = "II";
+                }
+                if (el.err1 < minError)
+                    minError = el.err1;
+                if (el.err2 < minError2)
+                    minError2 = el.err2;
             }
-            sortedByErrors = sortedByErrors.OrderBy(o => o.err).ToList();
+            sortedByErrors = sortedByErrors.OrderBy(o => o.err1).ToList();
 
             foreach (var v in sortedByErrors)
             {
-                Console.WriteLine("p/q = " + v.p + "/" + v.q + "  e1: " + v.err + "  type: " + v.type);
+                clearArrays();
+                Console.Write("p/q = " + v.p + "/" + v.q + " ");
+                Vdecimals(Decimal.Divide(v.p, v.q));
+                Console.WriteLine("  error: " + v.err1 + "  type: " + v.type);
             }
+        }
+
+        static int GCD(int a, int b)
+        {
+            while (b > 0)
+            {
+                int rem = a % b;
+                a = b;
+                b = rem;
+            }
+            return a;
         }
     }
 }
