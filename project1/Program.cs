@@ -130,8 +130,8 @@ namespace project1
             foreach (var el in sortedByErrors)
             {
                 int gcd = GCD(el.p, el.q);
-                el.err1 = Math.Abs(CONST - Decimal.Divide(el.p, el.q));
-                el.err2 = Math.Abs(Decimal.Multiply(el.q/gcd, CONST) - el.p/gcd);
+                el.err1 = CONST - Decimal.Divide(el.p, el.q);
+                el.err2 = Decimal.Multiply(el.q/gcd, CONST) - el.p/gcd;
                 if (el.err1 <= minError)
                 {
                     el.type = "I";
@@ -140,12 +140,12 @@ namespace project1
                 {
                     el.type = "II";
                 }
-                if (el.err1 < minError)
+                if (Math.Abs(el.err1) < Math.Abs(minError))
                     minError = el.err1;
-                if (el.err2 < minError2)
+                if (Math.Abs(el.err2) < Math.Abs(minError2))
                     minError2 = el.err2;
             }
-            sortedByErrors = sortedByErrors.OrderBy(o => o.err1).ToList();
+            sortedByErrors = sortedByErrors.OrderBy(o => Math.Abs(o.err1)).ToList();
 
             foreach (var v in sortedByErrors)
             {
