@@ -2,8 +2,9 @@ import sympy as sp
 import math as m
 from fractions import Fraction
 from decimal import *
+from math import log10, floor
 
-def pretty_print(poly):
+def pretty_print_fractions(poly):
     coeffs = poly.all_coeffs()
     maxcoef = len(coeffs) - 1
     frac_coeffs = []
@@ -18,6 +19,25 @@ def pretty_print(poly):
         maxcoef = maxcoef - 1
     print('')
 
+def pretty_print_power10(poly):
+    global k
+    coeffs = poly.all_coeffs()
+    maxcoef = len(coeffs) - 1
+    power10 = []
+    multiplied_coeffs = []
+    for coeff in coeffs:
+        mul = find_exp(abs(coeff)) if coeff != 0 else -1
+        power10.append(mul)
+        multiplied_coeffs.append(coeff*10**abs(mul))
+    for i in range(0, len(power10)):
+        if(power10[i] == -1): #there is no coeff
+            maxcoef = maxcoef - 1
+            continue
+        sign = '+' if coeffs[i] > 0 else ''
+        print(f"{sign if i>0 else ''}", f"{{:.{k+1}}}".format(multiplied_coeffs[i]), f"*10^{power10[i]}*x^{maxcoef}", end='')
+        maxcoef = maxcoef - 1
+    print('')
+
 def k_incr(num):
     ret = 0
     for ch in str(num).split(".")[1]:
@@ -26,6 +46,10 @@ def k_incr(num):
         else:
             break
     return ret + 1
+
+def find_exp(number):
+    base10 = log10(number)
+    return floor(base10)
 
 def count_sign_changes(v_arr):
     changes = 0
@@ -36,11 +60,10 @@ def count_sign_changes(v_arr):
     return changes
 
 x = sp.symbols('x')
-#P = sp.poly((707/500*x**5)+(589/12500*x**4)+(-2887/100000*x**3)+(7853/1000000*x**2)-1)
-#P = sp.poly(2**0.5*x**5 + math.pi*3/200*x**4 - 3**0.5/60*x**3 + 2*math.pi/800*x**2 - 1)
-P = sp.poly((m.pi/1260-1/420)*x**8 + (-m.pi**2/1680+m.pi/840)*x**7 + (-m.pi/30 + 1/10)*x**6 + (-m.pi**2/60 + m.pi/30)*x**5 + (2*m.pi/3 - 2)*x**4)
+P = sp.poly(m.e*x**3-m.pi**2*x**2+2*m.pi*x+4)
+#P = sp.poly((m.pi/1260-1/420)*x**8 + (-m.pi**2/1680+m.pi/840)*x**7 + (-m.pi/30 + 1/10)*x**6 + (-m.pi**2/60 + m.pi/30)*x**5 + (2*m.pi/3 - 2)*x**4)
 #P = sp.poly(x**9 - 3*x**7 - x**6 + 3*x**5 + 3*x**4 - x**3 - 3*x**2 + 1)
-print("Start poly:", str(P))
+print("Starting poly:", str(P))
 
 if str(P.domain) == "RR":
     k = int(input("Insert k (decimal places): "))
@@ -55,8 +78,11 @@ if str(P.domain) == "RR":
                 ctx.rounding = ROUND_UP
                 coeffs[i] = float(round(Decimal(str(coeffs[i])), k + k_incr(coeffs[i])))
     P = sp.Poly(coeffs, x)
-    print("Rounded P: ", end='')
-    pretty_print(P)
+    print("Rounded P:", P)
+    print("Powers of 10: ", end='')
+    pretty_print_power10(P)
+    print("Fractions P: ", end='')
+    pretty_print_fractions(P)
 
 Pdiff = sp.diff(P)
 print("Pdiff:", Pdiff)
@@ -68,9 +94,9 @@ P1 = sp.diff(P0)
 print("P0 =", P0)
 print("P1 =", P1)
 
-P_arr = [P0,P1]
+P_arr = [P0, P1]
 while sp.degree(P0) != 1:
-    Q = -sp.rem(P0,P1)
+    Q = -sp.rem(P0, P1)
     print("P" + str(len(P_arr)) + " = " + str(Q))
     P_arr.append(Q)
     P0 = P1
@@ -89,7 +115,6 @@ print("V_b: ", V_b)
 print("Sign changes in V_a:", count_sign_changes(V_a))
 print("Sign changes in V_b:", count_sign_changes(V_b))
 print(f"Broj nula polinoma P(x) = {str(P)} na segmentu:[{a},{b}]:", count_sign_changes(V_a) - count_sign_changes(V_b))
-
 
 
 
